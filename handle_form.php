@@ -1,6 +1,13 @@
 <?php
 require_once 'config.php';
 
+$db = new Config();
+$conn = $db->getConnection();
+
+if (!$conn) {
+    die("Database connection failed");
+}
+
 function clean_input($data) {
     return htmlspecialchars(strip_tags(trim($data)), ENT_QUOTES, 'UTF-8');
 }

@@ -1,6 +1,13 @@
 <?php
 require_once 'config.php';
 
+$db = new Config();
+$conn = $db->getConnection();
+
+if (!$conn) {
+    die("Database connection failed");
+}
+
 // search kucing berdasarkan jenis kucing
 $cat_name = isset($_GET['jenis_kucing']) ? htmlspecialchars($_GET['jenis_kucing']) : '';
 $cat_id = isset($_GET['cat_id']) ? (int)$_GET['cat_id'] : 0;

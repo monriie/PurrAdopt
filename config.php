@@ -1,13 +1,22 @@
 <?php
 
-$host     = 'localhost';
-$user     = 'root';       
-$password = '';           
-$database = 'cat_adoption'; 
+class Config {
+    private $host = "localhost";
+    private $user = "root";
+    private $password = "";
+    private $database = "cat_adoption";
 
-$conn = mysqli_connect($host, $user, $password, $database);
+    private $conn;
 
-if (!$conn) { 
-    die("Koneksi database gagal: " . mysqli_connect_error());
+    public function __construct() {
+        $this->conn = new mysqli($this->host, $this->user, $this->password, $this->database);
+        if ($this->conn->connect_error) {
+            die("Koneksi gagal: " . $this->conn->connect_error);
+        }
+    }
+
+    public function getConnection() {
+        return $this->conn;
+    }
 }
 ?>

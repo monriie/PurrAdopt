@@ -1,6 +1,13 @@
 <?php
 require_once 'config.php';
 
+$db = new Config();
+$conn = $db->getConnection();
+
+if (!$conn) {
+    die("Database connection failed");
+}
+
 // Fungsi clean inputan 
 function clean_input($data) {
     $data = trim($data);
