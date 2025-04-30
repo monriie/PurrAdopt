@@ -1,7 +1,10 @@
 <?php
 
-require_once 'config.php'; //koneksi database
+require_once __DIR__ . '/auth/config.php';
+require_once __DIR__ . '/auth/users.php';
 
+$config = new Config();
+$conn = $config->getConnection();
 class catManager {
     private $conn;
 
@@ -154,8 +157,11 @@ class displayCardCats {
 
 session_start();
 
-$db = new Config();
-$conn = $db->getConnection();
+// login user
+if (!isset($_SESSION['loggedin'])) {
+    header("Location: auth/login.php");
+    exit;
+}
 
 $catManager = new CatManager($conn);
 $adoptionManager = new AdoptionManager($conn);

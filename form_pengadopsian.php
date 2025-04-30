@@ -1,8 +1,9 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/auth/config.php';
+require_once __DIR__ . '/auth/users.php';
 
-$db = new Config();
-$conn = $db->getConnection();
+$config = new Config();
+$conn = $config->getConnection();
 
 if (!$conn) {
     die("Database connection failed");
