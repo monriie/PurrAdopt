@@ -1,161 +1,186 @@
 <?php
-require_once 'config.php'; //koneksi database
 
-session_start(); //untuk nyimpen data user sementara
+require_once __DIR__ . '/auth/config.php';
+require_once __DIR__ . '/auth/users.php';
 
-function getCats($sort = null) {
-    global $conn;
+$config = new Config();
+$conn = $config->getConnection();
+class catManager {
+    private $conn;
 
-    if (!$conn) {
-        return []; // ga terkoneksi database, maka fungsi akan mengembalikan array kosong
+    public function __construct(mysqli $conn) {
+        $this->conn = $conn;
     }
 
-    $sql = "SELECT * FROM cats"; // query utk ambil semua data dari tabel cats
-    if ($sort === 'a-z') {
-        $sql .= " ORDER BY name ASC";
-    } elseif ($sort === 'termurah') {
-        $sql .= " ORDER BY price ASC";
-    } elseif ($sort === 'termahal') {
-        $sql .= " ORDER BY price DESC";
+    public function getCats($sort = null) {
+        if (!$this->conn) {
+            return []; // ga terkoneksi database, maka fungsi akan mengembalikan array kosong
+        }
+    
+        $sql = "SELECT * FROM cats"; // query utk ambil semua data dari tabel cats
+        if ($sort === 'a-z') {
+            $sql .= " ORDER BY name ASC";
+        } elseif ($sort === 'termurah') {
+            $sql .= " ORDER BY price ASC";
+        } elseif ($sort === 'termahal') {
+            $sql .= " ORDER BY price DESC";
+        }
+    
+        $result = mysqli_query($this->conn, $sql);
+        return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : []; // ngembaliin hasil dalam bentuk array asosiatif atau array kosong kalo query gagal
     }
-
-    $result = mysqli_query($conn, $sql);
-    return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : []; // ngembaliin hasil dalam bentuk array asosiatif atau array kosong kalo query gagal
+    
+    public function addCat($data, $file) {
+        if (!$this->conn) return false;
+    
+        $name = Validator::cleanInput($data['cat_name']); // ambil dan bersiin nama kucing
+        $description = Validator::cleanInput($data['cat_description']); //ambil dan bersiin deskripsi
+        $price = (int)$data['cat_price']; //konvert harga ke int
+        
+        // check upload file berhasil ga nya
+        if ($file['cat_image']['error'] !== 0) {
+            return false; 
+        }
+        
+        // validasi tipe file upload
+        $allowed = array(
+            "jpg"  => "image/jpeg",
+            "jpeg" => "image/jpeg",
+            "png"  => "image/png",
+            "gif"  => "image/gif"
+        );
+        
+        // get info file
+        $filename = $file['cat_image']['name'];
+        $filetype = $file['cat_image']['type'];
+        $filesize = $file['cat_image']['size'];
+        
+        // extens file untuk huruf kecil semua
+        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        
+        // validasi tipe file dan sizenya (max 5mb) 
+        if (!array_key_exists($ext, $allowed) || 
+            !in_array($filetype, $allowed) || 
+            $filesize > 5 * 1024 * 1024) {
+            return false;
+        }
+        
+        // buat hashing fotonya/nama yang unik
+        $newfilename = uniqid() . "." . $ext;
+        $upload_dir = "uploads/";
+    
+        // jaga2 buat uploads directory kalo ga ada
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0755, true);
+        }
+        
+        $destination = $upload_dir . $newfilename;
+        
+        // hapus foto asli dari folder uploads
+        if (!move_uploaded_file($file['cat_image']['tmp_name'], $destination)) {
+            return false; // tidak berhasil uploads
+        }
+        
+        // store path nya foto hashing
+        $image_path = $upload_dir . $newfilename;
+        
+        // masukin data inputan ke database
+        $sql = "INSERT INTO cats (img, name, description, price) VALUES (?, ?, ?, ?)";
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) return false;
+    
+        $stmt->bind_param("sssi", $image_path, $name, $description, $price);
+        // sssi buat parameter string string string int
+        $success = $stmt->execute();
+        $stmt->close();
+    
+        return $success;
+    }
 }
 
-function clean_input($data) {
-    return htmlspecialchars(strip_tags(trim($data)), ENT_QUOTES, 'UTF-8'); //bersiin input dari user(trim=spasi awal+end, strip_tags=ilangin tag html+php, htmlspecialchars=convert karakter ke html)
-}
+class adoptionManager {
+    private $conn;
 
-
-function addCat($data, $file) {
-    global $conn;
-    if (!$conn) return false;
-
-    $name = clean_input($data['cat_name']); // ambil dan bersiin nama kucing
-    $description = clean_input($data['cat_description']); //ambil dan bersiin deskripsi
-    $price = (int)$data['cat_price']; //konvert harga ke int
-    
-    // check upload file berhasil ga nya
-    if ($file['cat_image']['error'] !== 0) {
-        return false; 
+    public function __construct(mysqli $conn) {
+        $this->conn = $conn;
     }
+
+    public function getAdoptions() {
+        if (!$this->conn) return [];
     
-    // validasi tipe file upload
-    $allowed = array(
-        "jpg"  => "image/jpeg",
-        "jpeg" => "image/jpeg",
-        "png"  => "image/png",
-        "gif"  => "image/gif"
-    );
-    
-    // get info file
-    $filename = $file['cat_image']['name'];
-    $filetype = $file['cat_image']['type'];
-    $filesize = $file['cat_image']['size'];
-    
-    // extens file untuk huruf kecil semua
-    $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-    
-    // validasi tipe file dan sizenya (max 5mb) 
-    if (!array_key_exists($ext, $allowed) || 
-        !in_array($filetype, $allowed) || 
-        $filesize > 5 * 1024 * 1024) {
+        // query JOIN utk info gabungan adoption + cat
+        $sql = "SELECT adoptions.id, adoptions.name, adoptions.email, adoptions.phone, adoptions.gender, cats.name AS cat_name FROM adoptions JOIN cats ON adoptions.cat_id = cats.id";
+        $result = mysqli_query($this->conn, $sql);
+        return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
+    }
+
+    public function removeStruk($id) {
+        $sql = "DELETE FROM adoptions WHERE id = ?";
+        if ($stmt = $this->conn->prepare($sql)) {
+            $stmt->bind_param("i", $id); // i = indikasi paramter int
+            if ($stmt->execute()) {
+                return true; 
+            } else {
+                echo "Error: " . $stmt->error; // pesan output error 
+            }
+            $stmt->close();
+        } else {
+            echo "Prepare statement failed: " . $this->conn->error; // pesan output error
+        }
         return false;
     }
-    
-    // buat hashing fotonya/nama yang unik
-    $newfilename = uniqid() . "." . $ext;
-    $upload_dir = "uploads/";
+}
 
-    // jaga2 buat uploads directory kalo ga ada
-    if (!is_dir($upload_dir)) {
-        mkdir($upload_dir, 0755, true);
+class Validator {
+    public static function cleanInput($data) {
+        return htmlspecialchars(strip_tags(trim($data)), ENT_QUOTES, 'UTF-8');//bersiin input dari user(trim=spasi awal+end, strip_tags=ilangin tag html+php, htmlspecialchars=convert karakter ke html)
     }
-    
-    $destination = $upload_dir . $newfilename;
-    
-    // hapus foto asli dari folder uploads
-    if (!move_uploaded_file($file['cat_image']['tmp_name'], $destination)) {
-        return false; // tidak berhasil uploads
+}
+
+class displayCardCats {
+    public static function display($cat) {
+        echo '<article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg">';
+        echo '<img src="' . htmlspecialchars($cat['img']) . '" alt="' . htmlspecialchars($cat['name']) . '" class="w-full h-48 object-cover hover:scale-105">';
+        echo '<div class="p-4">';
+        echo '<header><h2 class="text-xl font-semibold text-gray-700">' . htmlspecialchars($cat['name']) . '</h2></header>';
+        echo '<p class="text-gray-500 text-sm mt-2">' . htmlspecialchars($cat['description']) . '</p>';
+        echo '<p class="text-lg font-bold text-black mt-4">Rp ' . number_format($cat['price'], 0, ',', '.') . '</p>';
+        echo '<footer class="flex gap-2 mt-4">';
+        echo '<a href="form_pengadopsian.php?cat_id=' . $cat['id'] . '" class="flex-grow text-center bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600">' . self::getButtonLabel($cat['price']) . '</a>';
+        echo '</footer></div></article>';
     }
-    
-    // store path nya foto hashing
-    $image_path = $upload_dir . $newfilename;
-    
-    // masukin data inputan ke database
-    $sql = "INSERT INTO cats (img, name, description, price) VALUES (?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    if (!$stmt) return false;
 
-    $stmt->bind_param("sssi", $image_path, $name, $description, $price);
-    // sssi buat parameter string string string int
-    $success = $stmt->execute();
-    $stmt->close();
-
-    return $success;
-}
-
-function removeStruk($id) {
-    global $conn;
-    $sql = "DELETE FROM adoptions WHERE id = ?";
-    if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("i", $id); // i = indikasi paramter int
-        if ($stmt->execute()) {
-            return true; 
-        } else {
-            echo "Error: " . $stmt->error; // pesan output error 
-        }
-        $stmt->close();
-    } else {
-        echo "Prepare statement failed: " . $conn->error; // pesan output error
+    public static function getButtonLabel($price) {
+        return $price <= 10000000 ? "Segera Adopsi" : "Adopsi Eksklusif"; // Jika harga ≤ 10.000.000 "Segera Adopsi", Jika harga > 10.000.000 "Adopsi Eksklusif"
     }
-    return false;
 }
 
+session_start();
 
-function getButtonLabel($price) {
-    return $price <= 10000000 ? "Segera Adopsi" : "Adopsi Eksklusif"; // Jika harga ≤ 10.000.000 "Segera Adopsi", Jika harga > 10.000.000 "Adopsi Eksklusif"
+// login user
+if (!isset($_SESSION['loggedin'])) {
+    header("Location: auth/login.php");
+    exit;
 }
 
-function getAdoptions() {
-    global $conn;
-    if (!$conn) return [];
+$catManager = new CatManager($conn);
+$adoptionManager = new AdoptionManager($conn);
 
-    // query JOIN utk info gabungan adoption + cat
-    $sql = "SELECT adoptions.id, adoptions.name, adoptions.email, adoptions.phone, adoptions.gender, cats.name AS cat_name FROM adoptions JOIN cats ON adoptions.cat_id = cats.id";
-    $result = mysqli_query($conn, $sql);
-    return $result ? mysqli_fetch_all($result, MYSQLI_ASSOC) : [];
-}
-
-
-function displayCatCard($cat) {
-    echo '<article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg">';
-    echo '<img src="' . htmlspecialchars($cat['img']) . '" alt="' . htmlspecialchars($cat['name']) . '" class="w-full h-48 object-cover hover:scale-105">';
-    echo '<div class="p-4">';
-    echo '<header>';
-    echo '<h2 class="text-xl font-semibold text-gray-700">' . htmlspecialchars($cat['name']) . '</h2>';
-    echo '</header>';
-    echo '<p class="text-gray-500 text-sm mt-2">' . htmlspecialchars($cat['description']) . '</p>';
-    echo '<p class="text-lg font-bold text-black mt-4">Rp ' . number_format($cat['price'], 0, ',', '.') . '</p>';
-    echo '<footer class="flex gap-2 mt-4">';
-    echo '<a href="form_pengadopsian.php?cat_id=' . $cat['id'] . '" class="flex-grow text-center bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600">' . getButtonLabel($cat['price']) . '</a>';
-    echo '</footer></div></article>';
-}
-
-// proses Form
+// proses form
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $redirectUrl = $_SERVER['PHP_SELF'] . '?sort=' . ($_GET['sort'] ?? 'all');
-
     if (isset($_POST['add_cat'])) {
-        header('Location: ' . $redirectUrl . '&status=' . (addCat($_POST, $_FILES) ? 'added' : 'error'));
+        header('Location: ' . $redirectUrl . '&status=' . ($catManager->addCat($_POST, $_FILES) ? 'added' : 'error'));
     } elseif (isset($_POST['remove_struk'])) {
-        header('Location: ' . $redirectUrl . '&status=' . (removeStruk((int)$_POST['id']) ? 'removed' : 'error_remove'));
+        header('Location: ' . $redirectUrl . '&status=' . ($adoptionManager->removeStruk((int)$_POST['id']) ? 'removed' : 'error_remove'));
     }
     exit;
 }
 
-$cats = getCats($_GET['sort'] ?? 'all');
+// ambil data kucing
+$currentSort = $_GET['sort'] ?? 'all';
+$cats = $catManager->getCats($currentSort);
+$adoptions = $adoptionManager->getAdoptions();
 ?>
 
 
@@ -238,7 +263,8 @@ $cats = getCats($_GET['sort'] ?? 'all');
         <section aria-labelledby="cats-heading">
             <h2 id="cats-heading" class="sr-only">Daftar Kucing Tersedia</h2>
             <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <?php foreach ($cats as $index => $cat) { displayCatCard($cat); } ?>
+            <?php foreach ($cats as $cat) { displayCardCats::display($cat); } ?>
+
             </div>
         </section>
 
@@ -246,9 +272,7 @@ $cats = getCats($_GET['sort'] ?? 'all');
          <section class="mt-10">
             <h2 class="text-2xl font-bold text-purple-700">Struk Adopsi</h2>
             <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-                <?php 
-                $adoptions = getAdoptions();
-                foreach ($adoptions as $adoption) { ?>
+                <?php foreach ($adoptions as $adoption) { ?>
                     <div class="bg-white p-4 rounded-lg shadow-md">
                         <h3 class="text-xl font-semibold"><?= htmlspecialchars($adoption['name']) ?></h3>
                         <p class="text-gray-600">Email : <?= htmlspecialchars($adoption['email']) ?></p>

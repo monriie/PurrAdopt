@@ -1,5 +1,13 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/auth/config.php';
+require_once __DIR__ . '/auth/users.php';
+
+$config = new Config();
+$conn = $config->getConnection();
+
+if (!$conn) {
+    die("Database connection failed");
+}
 
 // Fungsi clean inputan 
 function clean_input($data) {

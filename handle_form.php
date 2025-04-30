@@ -1,5 +1,13 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/auth/config.php';
+require_once __DIR__ . '/auth/users.php';
+
+$config = new Config();
+$conn = $config->getConnection();
+
+if (!$conn) {
+    die("Database connection failed");
+}
 
 function clean_input($data) {
     return htmlspecialchars(strip_tags(trim($data)), ENT_QUOTES, 'UTF-8');
