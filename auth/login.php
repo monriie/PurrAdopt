@@ -1,43 +1,26 @@
 <?php
+
+session_start();
+
 require_once 'config.php';
 require_once 'users.php';
 
 $config = new Config();
 $conn = $config->getConnection();
 $user = new User($conn);
-$loginError = '';
+$pesan = '';
 
-// Process login form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
     
     if ($user->login($username, $password)) {
-        // Successful login redirects to index.php
+        // berhasil login
         header("Location: ../index.php");
         exit;
     } else {
-        // Failed login shows error message
-        $loginError = "Username atau password tidak cocok";
-    }
-}
-
-function valid($conn) {
-    // Cek user double
-    $result = $conn->query("SELECT COUNT(*) as count FROM users");
-    $count = $result->fetch_assoc()['count'];
-    echo "<p>Number of users in database: $count</p>";
-        
-    // List username
-    if ($count > 0) {
-        $result = $conn->query("SELECT username FROM users");
-        echo "<p>Usernames: ";
-        $usernames = [];
-        while ($row = $result->fetch_assoc()) {
-        $usernames[] = htmlspecialchars($row['username']);
-        }
-    echo implode(", ", $usernames);
-    echo "</p>";
+        // gagal login
+        $pesan = "Username atau password tidak cocok";
     }
 }
 ?>
@@ -57,9 +40,9 @@ function valid($conn) {
         <main class="bg-white shadow-md rounded-lg p-8 max-w-lg w-full">
             <h1 class="text-3xl font-bold text-center text-purple-700 mb-6">Login</h1> 
             
-            <?php if ($loginError): ?>
+            <?php if ($pesan): ?>
                 <div class="mb-4 p-3 rounded-lg bg-red-100 text-red-700">
-                    <?= $loginError ?>
+                    <?= $pesan ?>
                 </div>
             <?php endif; ?>
             

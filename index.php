@@ -224,9 +224,18 @@ $adoptions = $adoptionManager->getAdoptions();
         </section>
 
         <!-- tombol tambah kucing -->
-        <button id="openPopup" class="fixed top-4 right-4 bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-purple-500 transition-all z-10" aria-label="Tambah Kucing Baru" aria-haspopup="dialog">
+        <button id="openPopup" class="fixed top-4 right-4 z-10 flex items-center space-x-2 text-sm font-medium text-purple-700 bg-white px-4 py-2 rounded-full shadow-md hover:bg-purple-100 transition" aria-label="Tambah Kucing Baru" aria-haspopup="dialog">
             Tambah Kucing
         </button>
+
+        <!-- Profil user -->
+        <a href="profile.php" class="fixed top-4 left-4 z-30 flex items-center space-x-2 bg-white px-4 py-2 rounded-full shadow-md hover:bg-purple-100 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A9.003 9.003 0 0112 15c2.485 0 4.735.998 6.364 2.636M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span class="text-sm font-medium text-purple-700"><?php echo htmlspecialchars($_SESSION['username'] ?? 'User'); ?></span>
+        </a>
+
         
         <!-- popup untuk nambahin kucing baru -->
         <section id="popup" class="fixed inset-0 bg-transparent w-full h-full z-20 hidden" aria-labelledby="dialog-title" aria-modal="true">

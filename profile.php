@@ -42,7 +42,20 @@ $data = $user->getUserData($currentUsername);
     <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body class="font-[poppins] bg-gray-100 px-8 py-16 flex justify-center">
+    <nav class="flex justify-between items-center mb-6">
+        <!-- Tombol Beranda dengan SVG -->
+        <a href="index.php" class="fixed top-4 left-4 z-30 flex items-center space-x-2 text-purple-700 bg-white px-4 py-2 rounded-full shadow-md hover:bg-purple-100 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9.75L12 3l9 6.75V21a.75.75 0 01-.75.75H3.75A.75.75 0 013 21V9.75z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 22V12h6v10" />
+            </svg>
+        </a>
+
+        <!-- Tombol Logout -->
+        <a href="auth/logout.php" class="fixed top-4 right-4 z-10 flex items-center space-x-2 text-sm font-medium bg-white px-4 py-2 rounded-full shadow-md text-red-500 hover:bg-red-500 hover:text-white font-medium transition">Logout</a>
+    </nav>
     <main class="bg-white shadow-md rounded-lg p-8 max-w-lg w-full">
+
         <h1 class="text-3xl font-bold text-center text-purple-700 mb-6">Profil Saya</h1> 
 
         <?php if (!empty($success)): ?>
@@ -64,11 +77,6 @@ $data = $user->getUserData($currentUsername);
                 <button type="submit" class="bg-purple-500 text-white px-6 py-2 mb-2 rounded-lg hover:bg-purple-600 transition">Simpan Perubahan</button>
             </div>
         </form>
-
-        <div class="text-center pt-4">
-            <a href="index.php" class="text-purple-600 hover:underline mr-4">Beranda</a>
-            <a href="auth/logout.php" class="text-red-500 hover:underline">Logout</a>
-        </div>
     </main>
 </body>
 </html>

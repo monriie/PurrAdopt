@@ -1,22 +1,38 @@
 <?php
+
+session_start();
+
 require_once 'config.php';
 require_once 'users.php';
 
 $config = new Config();
 $conn = $config->getConnection();
-
 $user = new User($conn);
 $pesan = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $nama = $_POST['nama'];
-    $password = $_POST['password'];
+    $username = trim($_POST['username']);
+    $nama = trim($_POST['nama']);
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-    if ($user->register($username, nama: $nama, password: $password)) {
-        $pesan = "Registrasi berhasil. <a href='login.php'>Login sekarang</a>";
+    // Cek apakah username sudah dipakai
+    $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $stmt->store_result();
+
+    if ($stmt->num_rows > 0) {
+        $pesan = "Username sudah dipakai.";
     } else {
-        $pesan = "Registrasi gagal (mungkin username sudah dipakai).";
+        // Simpan user baru
+        $stmt = $conn->prepare("INSERT INTO users (username, nama, password) VALUES (?, ?, ?)");
+        $stmt->bind_param("sss", $username, $nama, $password);
+
+        if ($stmt->execute()) {
+            $pesan = "Registrasi berhasil. <a href='login.php'> Silahkan Kembali Login</a>";
+        } else {
+            $pesan = "Registrasi gagal. Silakan coba lagi.";
+        }
     }
 }
 ?>
