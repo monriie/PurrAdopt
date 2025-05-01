@@ -8,21 +8,21 @@ class User {
 
     public function register($username, $nama, $password) {
         try {
-            // First, check if username exists
+            // cek username dulu
             $checkStmt = $this->conn->prepare("SELECT username FROM users WHERE username = ?");
             $checkStmt->bind_param("s", $username);
             $checkStmt->execute();
             $checkResult = $checkStmt->get_result();
             
             if ($checkResult->num_rows > 0) {
-                // Username already exists
+                // username sudah ada
                 return false;
             }
             
-            // Hash the password
+            // hashing password
             $hashed = password_hash($password, PASSWORD_DEFAULT);
             
-            // Create the user
+            // buat user
             $stmt = $this->conn->prepare("INSERT INTO users (username, nama, password) VALUES (?, ?, ?)");
             if (!$stmt) {
                 error_log("Prepare failed: " . $this->conn->error);
@@ -62,7 +62,6 @@ class User {
                 $user = $result->fetch_assoc();
                 error_log("User found: " . print_r($user, true));
                 
-                // Check if password exists in the result
                 if (isset($user['password']) && password_verify($password, $user['password'])) {
                     session_start();
                     $_SESSION['loggedin'] = true;

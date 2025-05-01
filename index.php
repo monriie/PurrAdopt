@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/auth/config.php';
 require_once __DIR__ . '/auth/users.php';
+require 'util.php';
 
 $config = new Config();
 $conn = $config->getConnection();
@@ -139,12 +140,12 @@ class Validator {
 
 class displayCardCats {
     public static function display($cat) {
-        echo '<article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg">';
+        echo '<article class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg">';
         echo '<img src="' . htmlspecialchars($cat['img']) . '" alt="' . htmlspecialchars($cat['name']) . '" class="w-full h-48 object-cover hover:scale-105">';
         echo '<div class="p-4">';
-        echo '<header><h2 class="text-xl font-semibold text-gray-700">' . htmlspecialchars($cat['name']) . '</h2></header>';
-        echo '<p class="text-gray-500 text-sm mt-2">' . htmlspecialchars($cat['description']) . '</p>';
-        echo '<p class="text-lg font-bold text-black mt-4">Rp ' . number_format($cat['price'], 0, ',', '.') . '</p>';
+        echo '<header><h2 class="text-xl font-semibold text-gray-700 dark:text-white">' . htmlspecialchars($cat['name']) . '</h2></header>';
+        echo '<p class="text-gray-500 dark:text-gray-300 text-sm mt-2">' . htmlspecialchars($cat['description']) . '</p>';
+        echo '<p class="text-lg font-bold text-black dark:text-white mt-4">Rp ' . number_format($cat['price'], 0, ',', '.') . '</p>';
         echo '<footer class="flex gap-2 mt-4">';
         echo '<a href="form_pengadopsian.php?cat_id=' . $cat['id'] . '" class="flex-grow text-center bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600">' . self::getButtonLabel($cat['price']) . '</a>';
         echo '</footer></div></article>';
@@ -162,6 +163,22 @@ if (!isset($_SESSION['loggedin'])) {
     header("Location: auth/login.php");
     exit;
 }
+
+handleThemeToggle();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_dark_mode'])) {
+    if (isset($_COOKIE['dark_mode']) && $_COOKIE['dark_mode'] === 'true') {
+        setcookie('dark_mode', 'false', time() + (86400 * 30), '/');
+    } else {
+        setcookie('dark_mode', 'true', time() + (86400 * 30), '/');
+    }
+    // Redirect untuk mencegah resubmit
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit;
+}
+
+// Ambil status dark mode
+$darkMode = isset($_COOKIE['dark_mode']) && $_COOKIE['dark_mode'] === 'true';
 
 $catManager = new CatManager($conn);
 $adoptionManager = new AdoptionManager($conn);
@@ -185,20 +202,26 @@ $adoptions = $adoptionManager->getAdoptions();
 
 
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id" class="scroll-smooth <?= $darkMode ? 'dark' : '' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Daftar Adopsi Kucing - Tugas 3 Pemweb 2 Monica Amrina Rosyada">
     <title>Tugas 4 Pemweb 2 - Monica Amrina Rosyada (09021382328144)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
-<body class="font-[poppins] bg-gray-100 px-8">
-    <header class="mx-auto py-8 max-w-7xl">
-        <h1 class="text-4xl font-bold text-center text-purple-700">Daftar Adopsi Kucing</h1>
+<body class="font-[poppins] <?= $darkMode ? 'bg-gray-900' : 'bg-gray-100' ?>">
+    <header class="mx-auto mt-10 py-8 max-w-7xl">
+        <h1 class="text-4xl font-bold text-center text-purple-700 dark:text-purple-400">Daftar Adopsi Kucing</h1>
     </header>
 
     <main class="mx-auto px-4 pb-16 max-w-7xl">
@@ -206,17 +229,17 @@ $adoptions = $adoptionManager->getAdoptions();
         <section aria-labelledby="filter-heading" class="mb-8">
             <nav class="sort_criteria flex justify-center space-x-4">
                 <a href="?sort=a-z" 
-                   class="px-4 py-2 bg-purple-200 text-black rounded-full hover:bg-purple-300 transition <?php echo ($currentSort === 'a-z') ? 'bg-black text-white' : ''; ?>"
+                   class="px-4 py-2 dark:bg-purple-900 bg-purple-200 text-black dark:text-white rounded-full hover:bg-purple-300 dark:hover:bg-purple-800 transition <?php echo ($currentSort === 'a-z') ? 'bg-black dark:bg-purple-600 text-white' : ''; ?>"
                    aria-current="<?php echo ($currentSort === 'a-z') ? 'page' : 'false'; ?>">
                     A-Z
                 </a>
                 <a href="?sort=termurah" 
-                   class="px-4 py-2 bg-purple-200 text-black rounded-full hover:bg-purple-300 transition <?php echo ($currentSort === 'termurah') ? 'bg-black text-white' : ''; ?>"
+                   class="px-4 py-2 dark:bg-purple-900 bg-purple-200 text-black dark:text-white rounded-full hover:bg-purple-300 dark:hover:bg-purple-800 transition <?php echo ($currentSort === 'termurah') ? 'bg-black dark:bg-purple-600 text-white' : ''; ?>"
                    aria-current="<?php echo ($currentSort === 'termurah') ? 'page' : 'false'; ?>">
                     Termurah
                 </a>
                 <a href="?sort=termahal" 
-                   class="px-4 py-2 bg-purple-200 text-black rounded-full hover:bg-purple-300 transition <?php echo ($currentSort === 'termahal') ? 'bg-black text-white' : ''; ?>"
+                   class="px-4 py-2 dark:bg-purple-900 bg-purple-200 text-black dark:text-white rounded-full hover:bg-purple-300 dark:hover:bg-purple-800 transition <?php echo ($currentSort === 'termahal') ? 'bg-black dark:bg-purple-600 text-white' : ''; ?>"
                    aria-current="<?php echo ($currentSort === 'termahal') ? 'page' : 'false'; ?>">
                     Termahal
                 </a>
@@ -224,31 +247,50 @@ $adoptions = $adoptionManager->getAdoptions();
         </section>
 
         <!-- tombol tambah kucing -->
-        <button id="openPopup" class="fixed top-4 right-4 bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-purple-500 transition-all z-10" aria-label="Tambah Kucing Baru" aria-haspopup="dialog">
+        <button id="openPopup" class="fixed top-4 right-4 z-10 flex items-center space-x-2 text-sm font-medium text-purple-700 dark:text-purple-400 bg-white dark:bg-gray-800 px-4 py-2 rounded-full shadow-md hover:bg-purple-100 dark:hover:bg-gray-700 transition" aria-label="Tambah Kucing Baru" aria-haspopup="dialog">
             Tambah Kucing
         </button>
+
+        <!-- Profil user -->
+        <a href="profile.php" class="fixed top-4 left-4 z-30 flex items-center space-x-2 bg-white dark:text-purple-400 bg-white dark:bg-gray-800 px-4 py-2 rounded-full shadow-md hover:bg-purple-100 dark:hover:bg-gray-700 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A9.003 9.003 0 0112 15c2.485 0 4.735.998 6.364 2.636M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span class="text-sm font-medium text-purple-700 dark:text-purple-400"><?php echo htmlspecialchars($_SESSION['username'] ?? 'User'); ?></span>
+        </a>
+
+        <!-- button dark/light mode -->
+        <form method="POST" class="ml-auto">
+            <button  type="submit" name="toggle_dark_mode" class="fixed bottom-4 right-8 z-30 flex items-center space-x-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-purple-300 p-3 rounded-full shadow-md hover:shadow-lg transition">
+            <?= $darkMode
+                ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 " fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 0010.79 9.79z"/></svg>'
+                : '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M16.96 16.96l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M16.96 7.04l1.42-1.42"/></svg>'
+            ?>
+            </button>
+        </form>
         
+
         <!-- popup untuk nambahin kucing baru -->
         <section id="popup" class="fixed inset-0 bg-transparent w-full h-full z-20 hidden" aria-labelledby="dialog-title" aria-modal="true">
             <div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
-                <div class="bg-white p-6 rounded-lg shadow-md w-96 max-w-full">
-                    <h2 id="dialog-title" class="text-xl font-semibold mb-4 text-purple-600">Tambah Kucing Baru</h2>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md w-96 max-w-full">
+                    <h2 id="dialog-title" class="text-xl font-semibold mb-4 text-purple-600 dark:text-purple-400">Tambah Kucing Baru</h2>
                     <form method="POST" enctype="multipart/form-data" class="flex flex-col gap-3">
                         <div class="flex flex-col">
-                            <label for="cat_name" class="mb-1 font-medium">Nama Kucing :</label>
-                            <input type="text" name="cat_name" id="cat_name" required class="border p-2 rounded" placeholder="contoh: Milo - Persian">
+                            <label for="cat_name" class="mb-1 font-medium dark:text-gray-200">Nama Kucing :</label>
+                            <input type="text" name="cat_name" id="cat_name" required class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="contoh: Milo - Persian">
                         </div>
                         <div class="flex flex-col">
-                            <label for="cat_description" class="mb-1 font-medium">Deskripsi :</label>
-                            <input type="text" name="cat_description" id="cat_description" required class="border p-2 rounded" placeholder="contoh: berbulu lebat">
+                            <label for="cat_description" class="mb-1 font-medium dark:text-gray-200">Deskripsi :</label>
+                            <input type="text" name="cat_description" id="cat_description" required class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="contoh: berbulu lebat">
                         </div>
                         <div class="flex flex-col">
-                            <label for="cat_price" class="mb-1 font-medium">Harga (Rp) :</label>
-                            <input type="number" name="cat_price" id="cat_price" required class="border p-2 rounded" placeholder="contoh: 5000000">
+                            <label for="cat_price" class="mb-1 font-medium dark:text-gray-200">Harga (Rp) :</label>
+                            <input type="number" name="cat_price" id="cat_price" required class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="contoh: 5000000">
                         </div>
                         <div class="flex flex-col">
-                            <label for="cat_image" class="mb-1 font-medium">Gambar Kucing :</label>
-                            <input type="file" name="cat_image" id="cat_image" accept="image/*" required class="border p-2 rounded">
+                            <label for="cat_image" class="mb-1 font-medium dark:text-gray-200">Gambar Kucing :</label>
+                            <input type="file" name="cat_image" id="cat_image" accept="image/*" required class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
                         <div class="flex justify-between mt-4">
                             <button type="button" id="closePopup" class="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 transition-all">Tutup</button>
@@ -264,21 +306,20 @@ $adoptions = $adoptionManager->getAdoptions();
             <h2 id="cats-heading" class="sr-only">Daftar Kucing Tersedia</h2>
             <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             <?php foreach ($cats as $cat) { displayCardCats::display($cat); } ?>
-
             </div>
         </section>
 
         <!-- history struk -->
          <section class="mt-10">
-            <h2 class="text-2xl font-bold text-purple-700">Struk Adopsi</h2>
+            <h2 class="text-2xl font-bold text-purple-700 dark:text-purple-400">Struk Adopsi</h2>
             <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
                 <?php foreach ($adoptions as $adoption) { ?>
-                    <div class="bg-white p-4 rounded-lg shadow-md">
-                        <h3 class="text-xl font-semibold"><?= htmlspecialchars($adoption['name']) ?></h3>
-                        <p class="text-gray-600">Email : <?= htmlspecialchars($adoption['email']) ?></p>
-                        <p class="text-gray-600">No HP : <?= htmlspecialchars($adoption['phone']) ?></p>
-                        <p class="text-gray-600">Jenis Kelamin : <?= htmlspecialchars($adoption['gender']) ?></p>
-                        <p class="text-gray-600">Kucing : <?= htmlspecialchars($adoption['cat_name']) ?></p>
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold dark:text-white"><?= htmlspecialchars($adoption['name']) ?></h3>
+                        <p class="text-gray-600 dark:text-gray-300">Email : <?= htmlspecialchars($adoption['email']) ?></p>
+                        <p class="text-gray-600 dark:text-gray-300">No HP : <?= htmlspecialchars($adoption['phone']) ?></p>
+                        <p class="text-gray-600 dark:text-gray-300">Jenis Kelamin : <?= htmlspecialchars($adoption['gender']) ?></p>
+                        <p class="text-gray-600 dark:text-gray-300">Kucing : <?= htmlspecialchars($adoption['cat_name']) ?></p>
                         
                         <div class="flex space-x-2 mt-3">
                             <form action="update_struk.php" method="GET" class="inline-block">
@@ -300,7 +341,7 @@ $adoptions = $adoptionManager->getAdoptions();
         </section>
     </main>
 
-    <footer class="mx-auto px-4 py-6 max-w-7xl text-center text-gray-600 text-sm font-semibold">
+    <footer class="mx-auto px-4 py-6 max-w-7xl text-center text-gray-600 dark:text-gray-400 text-sm font-semibold">
         <p>&copy; <?php echo date('Y'); ?>. Monriie</p>
     </footer>
 
@@ -331,6 +372,47 @@ $adoptions = $adoptionManager->getAdoptions();
                 document.body.classList.remove('overflow-hidden');
             }
         });
+
+        document.getElementById('toggle-mode').addEventListener('click', function () {
+            const currentMode = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+            const newMode = currentMode === 'dark' ? 'light' : 'dark';
+
+            // Ubah class <html>
+            document.documentElement.classList.toggle('dark');
+
+            // Simpan preferensi ke cookie selama 30 hari
+            document.cookie = 'mode=' + newMode + '; path=/; max-age=' + (60 * 60 * 24 * 30);
+        });
+
+        // function applyTheme(theme) {
+        //     const html = document.documentElement;
+        //     const iconSun = document.getElementById('iconSun');
+        //     const iconMoon = document.getElementById('iconMoon');
+
+        //     if (theme === 'light') {
+        //         html.classList.remove('dark');
+        //         iconSun.classList.remove('hidden');
+        //         iconMoon.classList.add('hidden');
+        //     } else {
+        //         html.classList.add('dark');
+        //         iconSun.classList.add('hidden');
+        //         iconMoon.classList.remove('hidden');
+        //     }
+            
+        // }
+
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     const theme = getCookie('theme') || 'light';
+        //     applyTheme(theme);
+
+        //     const toggleBtn = document.getElementById('toggleTheme');
+        //     toggleBtn.addEventListener('click', () => {
+        //         const isDark = document.documentElement.classList.contains('dark');
+        //         const newTheme = isDark ? 'light' : 'dark';
+        //         applyTheme(newTheme);
+        //         setCookie('theme', newTheme, 365);
+        //     });
+        // });
     </script>
 </body>
 </html>
