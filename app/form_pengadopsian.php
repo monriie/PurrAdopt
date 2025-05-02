@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/auth/config.php';
-require_once __DIR__ . '/auth/users.php';
-require 'util.php';
+require_once __DIR__ . '/../auth/config.php';
+require_once __DIR__ . '/../auth/users.php';
+require_once __DIR__ . '/../include/util.php';
 
 $config = new Config();
 $conn = $config->getConnection();
@@ -93,7 +93,7 @@ $darkMode = isset($_COOKIE['dark_mode']) && $_COOKIE['dark_mode'] === 'true';
             
             <div class="text-center pt-4">
                 <button type="submit" class="bg-purple-500 text-white px-6 py-2 rounded-lg hover:bg-purple-600 transition duration-300">Kirim</button>
-                <a href="index.php" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition duration-300 ml-2">Kembali</a>
+                <a href="../public/index.php" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition duration-300 ml-2">Kembali</a>
             </div>
         </form>
     </main>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 24, 2025 at 05:31 AM
+-- Generation Time: May 01, 2025 at 05:57 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -43,7 +43,8 @@ CREATE TABLE `adoptions` (
 
 INSERT INTO `adoptions` (`id`, `cat_id`, `name`, `email`, `phone`, `gender`, `adoption_date`) VALUES
 (6, 21, 'kintun', '12345@gmail.com', '089765432121', 'Perempuan', '2025-03-24 05:10:10'),
-(23, 23, 'mon', 'marcies@gmail.com', '081398767898', 'Perempuan', '2025-03-24 05:22:00');
+(23, 23, 'mon', 'marcies@gmail.com', '081398767898', 'Perempuan', '2025-03-24 05:22:00'),
+(24, 19, 'kintun', '1234@gmail.com', '081234567890', 'Perempuan', '2025-03-25 17:57:46');
 
 -- --------------------------------------------------------
 
@@ -75,6 +76,28 @@ INSERT INTO `cats` (`id`, `img`, `name`, `description`, `price`, `created_at`, `
 (24, 'uploads/67e0ea33cc7e3.jpeg', 'Milo - Siberian', 'Bulu tebal, tahan dingin, ramah', 8750000, '2025-03-24 05:14:27', '2025-03-24 05:14:27'),
 (25, 'uploads/67e0eb5f1e667.jpeg', 'Rinn - Ragdoll', 'Jinak dan suka dipeluk', 7000000, '2025-03-24 05:19:27', '2025-03-24 05:19:27');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` int NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `nama` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `username`, `nama`, `password`, `created_at`) VALUES
+(1, 'monriie', 'mon', '$2y$10$/fBuDeHD/VC8kYf6oD4FX.t3fWJBKCzi43LNKaOYccu3Btye75o36', '2025-04-30 17:27:26'),
+(2, 'mon', 'mon', '$2y$10$.FBBosfoarSAB/bJ/nqk2OwZraR1LDjJwG1F6qo5URPbeI4lpWrWq', '2025-05-01 09:35:07');
+
 --
 -- Indexes for dumped tables
 --
@@ -93,6 +116,13 @@ ALTER TABLE `cats`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -100,13 +130,19 @@ ALTER TABLE `cats`
 -- AUTO_INCREMENT for table `adoptions`
 --
 ALTER TABLE `adoptions`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `cats`
 --
 ALTER TABLE `cats`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables

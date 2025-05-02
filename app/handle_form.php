@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/auth/config.php';
-require_once __DIR__ . '/auth/users.php';
+require_once __DIR__ . '/../auth/config.php';
+require_once __DIR__ . '/../auth/users.php';
 
 $config = new Config();
 $conn = $config->getConnection();
@@ -55,6 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "Error: " . $conn->error;
     }
 } else {
-    header("Location: index.php");
+    header("Location: ../public/index.php");
     exit;
 }

@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/auth/config.php';
-require_once __DIR__ . '/auth/users.php';
-require 'util.php';
+require_once __DIR__ . '/../auth/config.php';
+require_once __DIR__ . '/../auth/users.php';
+require_once __DIR__ . '/../include/util.php';
 
 $config = new Config();
 $conn = $config->getConnection();
@@ -68,7 +68,7 @@ class catManager {
         
         // buat hashing fotonya/nama yang unik
         $newfilename = uniqid() . "." . $ext;
-        $upload_dir = "uploads/";
+        $upload_dir = __DIR__ . "../uploads/";
     
         // jaga2 buat uploads directory kalo ga ada
         if (!is_dir($upload_dir)) {
@@ -141,13 +141,13 @@ class Validator {
 class displayCardCats {
     public static function display($cat) {
         echo '<article class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg">';
-        echo '<img src="' . htmlspecialchars($cat['img']) . '" alt="' . htmlspecialchars($cat['name']) . '" class="w-full h-48 object-cover hover:scale-105">';
+        echo '<img src="../' . htmlspecialchars($cat['img']) . '" alt="' . htmlspecialchars($cat['name']) . '" class="w-full h-48 object-cover hover:scale-105">';
         echo '<div class="p-4">';
         echo '<header><h2 class="text-xl font-semibold text-gray-700 dark:text-white">' . htmlspecialchars($cat['name']) . '</h2></header>';
         echo '<p class="text-gray-500 dark:text-gray-300 text-sm mt-2">' . htmlspecialchars($cat['description']) . '</p>';
         echo '<p class="text-lg font-bold text-black dark:text-white mt-4">Rp ' . number_format($cat['price'], 0, ',', '.') . '</p>';
         echo '<footer class="flex gap-2 mt-4">';
-        echo '<a href="form_pengadopsian.php?cat_id=' . $cat['id'] . '" class="flex-grow text-center bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600">' . self::getButtonLabel($cat['price']) . '</a>';
+        echo '<a href="../app/form_pengadopsian.php?cat_id=' . $cat['id'] . '" class="flex-grow text-center bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600">' . self::getButtonLabel($cat['price']) . '</a>';
         echo '</footer></div></article>';
     }
 
@@ -160,7 +160,7 @@ session_start();
 
 // login user
 if (!isset($_SESSION['loggedin'])) {
-    header("Location: auth/login.php");
+    header("Location: ../auth/login.php");
     exit;
 }
 
@@ -252,7 +252,7 @@ $adoptions = $adoptionManager->getAdoptions();
         </button>
 
         <!-- Profil user -->
-        <a href="profile.php" class="fixed top-4 left-4 z-30 flex items-center space-x-2 bg-white dark:text-purple-400 bg-white dark:bg-gray-800 px-4 py-2 rounded-full shadow-md hover:bg-purple-100 dark:hover:bg-gray-700 transition">
+        <a href="../app/profile.php" class="fixed top-4 left-4 z-30 flex items-center space-x-2 bg-white dark:text-purple-400 bg-white dark:bg-gray-800 px-4 py-2 rounded-full shadow-md hover:bg-purple-100 dark:hover:bg-gray-700 transition">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A9.003 9.003 0 0112 15c2.485 0 4.735.998 6.364 2.636M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -322,7 +322,7 @@ $adoptions = $adoptionManager->getAdoptions();
                         <p class="text-gray-600 dark:text-gray-300">Kucing : <?= htmlspecialchars($adoption['cat_name']) ?></p>
                         
                         <div class="flex space-x-2 mt-3">
-                            <form action="update_struk.php" method="GET" class="inline-block">
+                            <form action="../app/update_struk.php" method="GET" class="inline-block">
                                 <input type="hidden" name="id" value="<?= $adoption['id'] ?>">
                                 <button type="submit" class="bg-purple-500 text-white py-2 px-4 rounded-lg hover:bg-purple-600">
                                     Edit Struk
