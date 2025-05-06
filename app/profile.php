@@ -1,8 +1,9 @@
 <?php
-session_start();
 require_once __DIR__ . '/../auth/config.php';
 require_once __DIR__ . '/../auth/users.php';
 require_once __DIR__ . '/../include/util.php';
+
+session_start();
 
 if (!isset($_SESSION['loggedin'])) {
     header("Location: ../auth/login.php");
@@ -75,11 +76,11 @@ $darkMode = isset($_COOKIE['dark_mode']) && $_COOKIE['dark_mode'] === 'true';
         <form method="POST" class="space-y-4">
             <div>
                 <label for="new_username" class="block font-medium text-gray-700 dark:text-gray-200">Username:</label>
-                <input type="text" id="new_username" name="new_username" value="<?= htmlspecialchars($data['username']) ?>" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <input type="text" id="new_username" name="new_username" value="<?= htmlspecialchars($data['username']) ?>" required class="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             </div>
             <div>
                 <label for="new_password" class="block font-medium text-gray-700 dark:text-gray-200">Password Baru:</label>
-                <input type="password" id="new_password" name="new_password" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500  dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <input type="password" id="new_password" name="new_password" required class="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             </div>
             <div class="text-center pt-4">
                 <button type="submit" class="bg-purple-500 text-white px-6 py-2 mb-2 rounded-lg hover:bg-purple-600 transition">Simpan Perubahan</button>

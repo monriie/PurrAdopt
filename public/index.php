@@ -6,6 +6,7 @@ require_once __DIR__ . '/../include/util.php';
 
 $config = new Config();
 $conn = $config->getConnection();
+
 class catManager {
     private $conn;
 
@@ -139,18 +140,6 @@ class Validator {
 }
 
 class displayCardCats {
-    public static function display($cat) {
-        echo '<article class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg">';
-        echo '<img src="../' . htmlspecialchars($cat['img']) . '" alt="' . htmlspecialchars($cat['name']) . '" class="w-full h-48 object-cover hover:scale-105">';
-        echo '<div class="p-4">';
-        echo '<header><h2 class="text-xl font-semibold text-gray-700 dark:text-white">' . htmlspecialchars($cat['name']) . '</h2></header>';
-        echo '<p class="text-gray-500 dark:text-gray-300 text-sm mt-2">' . htmlspecialchars($cat['description']) . '</p>';
-        echo '<p class="text-lg font-bold text-black dark:text-white mt-4">Rp ' . number_format($cat['price'], 0, ',', '.') . '</p>';
-        echo '<footer class="flex gap-2 mt-4">';
-        echo '<a href="../app/form_pengadopsian.php?cat_id=' . $cat['id'] . '" class="flex-grow text-center bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600">' . self::getButtonLabel($cat['price']) . '</a>';
-        echo '</footer></div></article>';
-    }
-
     public static function getButtonLabel($price) {
         return $price <= 10000000 ? "Segera Adopsi" : "Adopsi Eksklusif"; // Jika harga ≤ 10.000.000 "Segera Adopsi", Jika harga > 10.000.000 "Adopsi Eksklusif"
     }
@@ -163,22 +152,6 @@ if (!isset($_SESSION['loggedin'])) {
     header("Location: ../auth/login.php");
     exit;
 }
-
-handleThemeToggle();
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_dark_mode'])) {
-    if (isset($_COOKIE['dark_mode']) && $_COOKIE['dark_mode'] === 'true') {
-        setcookie('dark_mode', 'false', time() + (86400 * 30), '/');
-    } else {
-        setcookie('dark_mode', 'true', time() + (86400 * 30), '/');
-    }
-    // Redirect untuk mencegah resubmit
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit;
-}
-
-// Ambil status dark mode
-$darkMode = isset($_COOKIE['dark_mode']) && $_COOKIE['dark_mode'] === 'true';
 
 $catManager = new CatManager($conn);
 $adoptionManager = new AdoptionManager($conn);
@@ -228,6 +201,9 @@ $adoptions = $adoptionManager->getAdoptions();
         <!-- sorting -->
         <section aria-labelledby="filter-heading" class="mb-8">
             <nav class="sort_criteria flex justify-center space-x-4">
+                <!--search JQuery-->
+                <input type="text" id="searchInput" placeholder="Cari kucing..." class="border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+
                 <a href="?sort=a-z" 
                    class="px-4 py-2 dark:bg-purple-900 bg-purple-200 text-black dark:text-white rounded-full hover:bg-purple-300 dark:hover:bg-purple-800 transition <?php echo ($currentSort === 'a-z') ? 'bg-black dark:bg-purple-600 text-white' : ''; ?>"
                    aria-current="<?php echo ($currentSort === 'a-z') ? 'page' : 'false'; ?>">
@@ -278,19 +254,19 @@ $adoptions = $adoptionManager->getAdoptions();
                     <form method="POST" enctype="multipart/form-data" class="flex flex-col gap-3">
                         <div class="flex flex-col">
                             <label for="cat_name" class="mb-1 font-medium dark:text-gray-200">Nama Kucing :</label>
-                            <input type="text" name="cat_name" id="cat_name" required class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="contoh: Milo - Persian">
+                            <input type="text" name="cat_name" id="cat_name" required class="border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="contoh: Milo - Persian">
                         </div>
                         <div class="flex flex-col">
                             <label for="cat_description" class="mb-1 font-medium dark:text-gray-200">Deskripsi :</label>
-                            <input type="text" name="cat_description" id="cat_description" required class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="contoh: berbulu lebat">
+                            <input type="text" name="cat_description" id="cat_description" required class="border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="contoh: berbulu lebat">
                         </div>
                         <div class="flex flex-col">
                             <label for="cat_price" class="mb-1 font-medium dark:text-gray-200">Harga (Rp) :</label>
-                            <input type="number" name="cat_price" id="cat_price" required class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="contoh: 5000000">
+                            <input type="number" name="cat_price" id="cat_price" required class="border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="contoh: 5000000">
                         </div>
                         <div class="flex flex-col">
                             <label for="cat_image" class="mb-1 font-medium dark:text-gray-200">Gambar Kucing :</label>
-                            <input type="file" name="cat_image" id="cat_image" accept="image/*" required class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <input type="file" name="cat_image" id="cat_image" accept="image/*" required class="border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
                         <div class="flex justify-between mt-4">
                             <button type="button" id="closePopup" class="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 transition-all">Tutup</button>
@@ -304,9 +280,31 @@ $adoptions = $adoptionManager->getAdoptions();
         <!-- nampilin kucing -->
         <section aria-labelledby="cats-heading">
             <h2 id="cats-heading" class="sr-only">Daftar Kucing Tersedia</h2>
-            <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <?php foreach ($cats as $cat) { displayCardCats::display($cat); } ?>
+            <div id="catList"class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <?php foreach ($cats as $cat): ?>
+                    <article 
+                        class="cat-item bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg" 
+                        data-name="<?= htmlspecialchars(strtolower($cat['name'])) ?>">
+                        <img src="../<?= htmlspecialchars($cat['img']); ?>" 
+                            alt="<?= htmlspecialchars($cat['name']) ?>" 
+                            class="w-full h-48 object-cover hover:scale-105">
+                        <div class="p-4">
+                            <header><h2 class="text-xl font-semibold text-gray-700 dark:text-white"><?= htmlspecialchars($cat['name']) ?></h2></header>
+                            <p class="text-gray-500 dark:text-gray-300 text-sm mt-2"><?= htmlspecialchars($cat['description']) ?></p>
+                            <p class="text-lg font-bold text-black dark:text-white mt-4">Rp <?= number_format($cat['price'], 0, ',', '.') ?></p>
+                            <footer class="flex gap-2 mt-4">
+                                <a href="../app/form_pengadopsian.php?cat_id=<?= $cat['id'] ?>" 
+                                class="flex-grow text-center bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600">
+                                <?= displayCardCats::getButtonLabel($cat['price']) ?>
+                                </a>
+                            </footer>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
             </div>
+            <p id="noResult" class="col-span-full text-center text-gray-500 dark:text-gray-300 hidden">
+                        Tidak ada kucing yang sesuai dengan pencarian
+                    </p>
         </section>
 
         <!-- history struk -->
@@ -345,74 +343,7 @@ $adoptions = $adoptionManager->getAdoptions();
         <p>&copy; <?php echo date('Y'); ?>. Monriie</p>
     </footer>
 
-    <script>
-        const popup = document.getElementById('popup');
-        const openButton = document.getElementById('openPopup');
-        const closeButton = document.getElementById('closePopup');
-
-        // buka popup
-        openButton.addEventListener('click', function() {
-            popup.classList.remove('hidden');
-            popup.showModal();
-            document.body.classList.add('overflow-hidden');
-        });
-
-        // tutup popup
-        closeButton.addEventListener('click', function() {
-            popup.classList.add('hidden');
-            popup.close();
-            document.body.classList.remove('overflow-hidden');
-        });
-
-        // Tutup popup saat mengklik di luar
-        popup.addEventListener('click', function(event) {
-            if (event.target === popup) {
-                popup.classList.add('hidden');
-                popup.close();
-                document.body.classList.remove('overflow-hidden');
-            }
-        });
-
-        document.getElementById('toggle-mode').addEventListener('click', function () {
-            const currentMode = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-            const newMode = currentMode === 'dark' ? 'light' : 'dark';
-
-            // Ubah class <html>
-            document.documentElement.classList.toggle('dark');
-
-            // Simpan preferensi ke cookie selama 30 hari
-            document.cookie = 'mode=' + newMode + '; path=/; max-age=' + (60 * 60 * 24 * 30);
-        });
-
-        // function applyTheme(theme) {
-        //     const html = document.documentElement;
-        //     const iconSun = document.getElementById('iconSun');
-        //     const iconMoon = document.getElementById('iconMoon');
-
-        //     if (theme === 'light') {
-        //         html.classList.remove('dark');
-        //         iconSun.classList.remove('hidden');
-        //         iconMoon.classList.add('hidden');
-        //     } else {
-        //         html.classList.add('dark');
-        //         iconSun.classList.add('hidden');
-        //         iconMoon.classList.remove('hidden');
-        //     }
-            
-        // }
-
-        // document.addEventListener('DOMContentLoaded', () => {
-        //     const theme = getCookie('theme') || 'light';
-        //     applyTheme(theme);
-
-        //     const toggleBtn = document.getElementById('toggleTheme');
-        //     toggleBtn.addEventListener('click', () => {
-        //         const isDark = document.documentElement.classList.contains('dark');
-        //         const newTheme = isDark ? 'light' : 'dark';
-        //         applyTheme(newTheme);
-        //         setCookie('theme', newTheme, 365);
-        //     });
-        // });
-    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

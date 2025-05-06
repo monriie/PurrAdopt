@@ -65,22 +65,22 @@ $darkMode = isset($_COOKIE['dark_mode']) && $_COOKIE['dark_mode'] === 'true';
             
             <div>
                 <label for="nama" class="block font-medium text-gray-700 dark:text-gray-200">Nama:</label>
-                <input type="text" id="nama" name="nama" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <input type="text" id="nama" name="nama" required class="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             </div>
             
             <div>
                 <label for="email" class="block font-medium text-gray-700 dark:text-gray-200">Email:</label>
-                <input type="email" id="email" name="email" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <input type="email" id="email" name="email" required class="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             </div>
             
             <div>
                 <label for="no_hp" class="block font-medium text-gray-700 dark:text-gray-200">Nomor HP:</label>
-                <input type="number" id="no_hp" name="no_hp" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <input type="number" id="no_hp" name="no_hp" required class="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             </div>
             
             <div>
                 <label for="jenis_kelamin" class="block font-medium text-gray-700 dark:text-gray-200">Jenis Kelamin:</label>
-                <select id="jenis_kelamin" name="jenis_kelamin" required class="w-full border border-gray-300 rounded-lg px-3 py-2 appearance-none focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <select id="jenis_kelamin" name="jenis_kelamin" required class="w-full border border-gray-300 rounded-lg px-3 py-2 appearance-none dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                     <option value="Laki-laki">Laki-laki</option>
                     <option value="Perempuan">Perempuan</option>
                 </select>

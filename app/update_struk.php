@@ -86,22 +86,22 @@ $darkMode = isset($_COOKIE['dark_mode']) && $_COOKIE['dark_mode'] === 'true';
             <form method="POST" class="space-y-4">
                 <div>
                     <label class="block font-medium text-gray-700 dark:text-gray-200">Nama :</label>
-                    <input type="text" name="name" value="<?= htmlspecialchars($adoption['name']) ?>" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                    <input type="text" name="name" value="<?= htmlspecialchars($adoption['name']) ?>" class="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
 
                 <div>
                     <label class="block font-medium text-gray-700 dark:text-gray-200">Email :</label>
-                    <input type="email" name="email" value="<?= htmlspecialchars($adoption['email']) ?>" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                    <input type="email" name="email" value="<?= htmlspecialchars($adoption['email']) ?>" class="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
 
                 <div>
                     <label class="block font-medium text-gray-700 dark:text-gray-200">No HP :</label>
-                    <input type="text" name="phone" value="<?= htmlspecialchars($adoption['phone']) ?>" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                    <input type="text" name="phone" value="<?= htmlspecialchars($adoption['phone']) ?>" class="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
 
                 <div>
                     <label class="block font-medium text-gray-700 dark:text-gray-200">Jenis Kelamin :</label>
-                    <select name="gender" class="w-full border border-gray-300 rounded-lg px-3 py-2  appearance-none focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <select name="gender" class="w-full border border-gray-300 rounded-lg px-3 py-2  appearance-none dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         <option value="Laki-laki" <?= $adoption['gender'] == 'Laki-laki' ? 'selected' : '' ?>>Laki-laki</option>
                         <option value="Perempuan" <?= $adoption['gender'] == 'Perempuan' ? 'selected' : '' ?>>Perempuan</option>
                     </select>

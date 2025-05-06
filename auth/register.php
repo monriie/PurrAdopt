@@ -70,17 +70,17 @@ $darkMode = isset($_COOKIE['dark_mode']) && $_COOKIE['dark_mode'] === 'true';
         <form action="register.php" method="POST" class="space-y-4">
             <div>
                 <label for="username" class="block font-medium text-gray-700 dark:text-gray-200">Username: </label>
-                <input type="text" id="username" name="username" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <input type="text" id="username" name="username" required class="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             </div>
             
             <div>
                 <label for="nama" class="block font-medium text-gray-700 dark:text-gray-200">Nama Lengkap: </label>
-                <input type="text" id="nama" name="nama" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <input type="text" id="nama" name="nama" required class="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             </div>
             
             <div>
                 <label for="password" class="block font-medium text-gray-700 dark:text-gray-200">Password: </label>
-                <input type="password" id="password" name="password" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <input type="password" id="password" name="password" required class="w-full border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             </div>
             
             <div class="grid text-center pt-4">
