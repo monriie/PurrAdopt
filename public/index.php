@@ -303,8 +303,8 @@ $adoptions = $adoptionManager->getAdoptions();
                 <?php endforeach; ?>
             </div>
             <p id="noResult" class="col-span-full text-center text-gray-500 dark:text-gray-300 hidden">
-                        Tidak ada kucing yang sesuai dengan pencarian
-                    </p>
+                   Tidak ada kucing yang sesuai dengan pencarian
+            </p>
         </section>
 
         <!-- history struk -->

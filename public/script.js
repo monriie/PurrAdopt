@@ -39,11 +39,6 @@ $(document).ready(function() {
                 $(this).hide();  
             }
         });
-        if (found) {
-            $('#noResult').hide();
-        } else {
-            $('#noResult').show();
-        }
     });
 });
 
