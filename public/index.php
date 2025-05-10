@@ -300,12 +300,14 @@ $adoptions = $adoptionManager->getAdoptions();
                             <header><h2 class="text-xl font-semibold text-gray-700 dark:text-white"><?= htmlspecialchars($cat['name']) ?></h2></header>
                             <p class="text-gray-500 dark:text-gray-300 text-sm mt-2"><?= htmlspecialchars($cat['description']) ?></p>
                             <p class="text-lg font-bold text-black dark:text-white mt-4">Rp <?= number_format($cat['price'], 0, ',', '.') ?></p>
-                            <footer class="flex gap-2 mt-4">
-                                <a href="../app/form_pengadopsian.php?cat_id=<?= $cat['id'] ?>" 
-                                class="flex-grow text-center bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600">
-                                <?= displayCardCats::getButtonLabel($cat['price']) ?>
-                                </a>
-                            </footer>
+                            <?php if ($_SESSION['role'] === 'pengadopsi') : ?>
+                                <div class="flex gap-2 mt-4">
+                                    <a href="../app/form_pengadopsian.php?cat_id=<?= $cat['id'] ?>" 
+                                    class="flex-grow text-center bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600">
+                                    <?= displayCardCats::getButtonLabel($cat['price']) ?>
+                                    </a>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </article>
                 <?php endforeach; ?>
@@ -343,7 +345,6 @@ $adoptions = $adoptionManager->getAdoptions();
                                 </form>
                             </div>
                         <?php endif; ?>
-
                     </div>
                 <?php } ?>
             </div>
