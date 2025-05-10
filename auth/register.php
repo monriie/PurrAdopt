@@ -26,8 +26,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pesan = "Username sudah dipakai.";
     } else {
         // Simpan user baru
-        $stmt = $conn->prepare("INSERT INTO users (username, nama, password) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $username, $nama, $password);
+        $role = 'pengadopsi';
+        $stmt = $conn->prepare("INSERT INTO users (username, nama, password, role) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $username, $nama, $password, $role);
 
         if ($stmt->execute()) {
             $pesan = "Registrasi berhasil. <a href='login.php'> Silahkan Kembali Login</a>";

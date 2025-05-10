@@ -30,6 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Gagal mengubah profil.";
     }
 }
+$role = $_SESSION['role'];
+
+// Warna berdasarkan role
+$colorClass = $role === 'admin'
+    ? 'text-green-500 dark:bg-green-500'
+    : 'text-red-500 dark:bg-red-500';
 
 // Ambil data user
 $data = $user->getUserData($currentUsername);
@@ -63,9 +69,15 @@ $darkMode = isset($_COOKIE['dark_mode']) && $_COOKIE['dark_mode'] === 'true';
         <!-- Tombol Logout -->
         <a href="../auth/logout.php" class="fixed top-4 right-4 z-10 flex items-center space-x-2 text-sm font-medium bg-white dark:text-purple-400 dark:bg-gray-800 px-4 py-2 rounded-full shadow-md text-red-500 hover:bg-red-500 hover:text-white font-medium transition">Logout</a>
     </nav>
-    <main class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-8 max-w-lg w-full">
 
+    <main class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-8 max-w-lg w-full">
         <h1 class="text-3xl font-bold text-center text-purple-700 dark:text-purple-400 mb-6">Profil Saya</h1> 
+
+        <div class="flex justify-center mb-6">
+            <span class="inline-flex items-center text-sm font-medium bg-white dark:text-white <?= $colorClass ?> px-4 py-2 rounded-full shadow-md transition">
+                <?= htmlspecialchars($role) ?>
+            </span>
+        </div>
 
         <?php if (!empty($success)): ?>
             <div class="bg-green-100 text-green-700 p-3 rounded mb-4"><?= $success ?></div>

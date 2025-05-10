@@ -10,6 +10,12 @@ if (!$conn) {
     die("Database connection failed");
 }
 
+session_start();
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
+    echo "Akses ditolak. Hanya admin yang bisa mengedit struk.";
+    exit();
+}
+
 // Fungsi clean inputan 
 function clean_input($data) {
     $data = trim($data);

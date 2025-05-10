@@ -11,6 +11,7 @@ $conn = $config->getConnection();
 $user = new User($conn);
 $pesan = '';
 
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
@@ -24,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pesan = "Username atau password tidak cocok";
     }
 }
+
 $darkMode = isset($_COOKIE['dark_mode']) && $_COOKIE['dark_mode'] === 'true';
 ?>
 

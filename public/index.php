@@ -159,9 +159,12 @@ $adoptionManager = new AdoptionManager($conn);
 // proses form
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $redirectUrl = $_SERVER['PHP_SELF'] . '?sort=' . ($_GET['sort'] ?? 'all');
-    if (isset($_POST['add_cat'])) {
+    // Tambahkan pengecekan role
+    $role = $_SESSION['role'] ?? '';
+
+    if (isset($_POST['add_cat']) && $role === 'admin') {
         header('Location: ' . $redirectUrl . '&status=' . ($catManager->addCat($_POST, $_FILES) ? 'added' : 'error'));
-    } elseif (isset($_POST['remove_struk'])) {
+    } elseif (isset($_POST['remove_struk']) && $role === 'admin') {
         header('Location: ' . $redirectUrl . '&status=' . ($adoptionManager->removeStruk((int)$_POST['id']) ? 'removed' : 'error_remove'));
     }
     exit;
@@ -222,10 +225,13 @@ $adoptions = $adoptionManager->getAdoptions();
             </nav>
         </section>
 
-        <!-- tombol tambah kucing -->
-        <button id="openPopup" class="fixed top-4 right-4 z-10 flex items-center space-x-2 text-sm font-medium text-purple-700 dark:text-purple-400 bg-white dark:bg-gray-800 px-4 py-2 rounded-full shadow-md hover:bg-purple-100 dark:hover:bg-gray-700 transition" aria-label="Tambah Kucing Baru" aria-haspopup="dialog">
-            Tambah Kucing
-        </button>
+        <!-- pembeda fitur -->
+        <?php if ($_SESSION['role'] === 'admin') : ?>
+            <!-- tombol tambah kucing -->
+            <button id="openPopup" class="fixed top-4 right-4 z-10 flex items-center space-x-2 text-sm font-medium text-purple-700 dark:text-purple-400 bg-white dark:bg-gray-800 px-4 py-2 rounded-full shadow-md hover:bg-purple-100 dark:hover:bg-gray-700 transition" aria-label="Tambah Kucing Baru" aria-haspopup="dialog">
+                Tambah Kucing
+            </button>
+        <?php endif; ?>
 
         <!-- Profil user -->
         <a href="../app/profile.php" class="fixed top-4 left-4 z-30 flex items-center space-x-2 bg-white dark:text-purple-400 bg-white dark:bg-gray-800 px-4 py-2 rounded-full shadow-md hover:bg-purple-100 dark:hover:bg-gray-700 transition">
@@ -246,36 +252,38 @@ $adoptions = $adoptionManager->getAdoptions();
         </form>
         
 
-        <!-- popup untuk nambahin kucing baru -->
-        <section id="popup" class="fixed inset-0 bg-transparent w-full h-full z-20 hidden" aria-labelledby="dialog-title" aria-modal="true">
-            <div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md w-96 max-w-full">
-                    <h2 id="dialog-title" class="text-xl font-semibold mb-4 text-purple-600 dark:text-purple-400">Tambah Kucing Baru</h2>
-                    <form method="POST" enctype="multipart/form-data" class="flex flex-col gap-3">
-                        <div class="flex flex-col">
-                            <label for="cat_name" class="mb-1 font-medium dark:text-gray-200">Nama Kucing :</label>
-                            <input type="text" name="cat_name" id="cat_name" required class="border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="contoh: Milo - Persian">
-                        </div>
-                        <div class="flex flex-col">
-                            <label for="cat_description" class="mb-1 font-medium dark:text-gray-200">Deskripsi :</label>
-                            <input type="text" name="cat_description" id="cat_description" required class="border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="contoh: berbulu lebat">
-                        </div>
-                        <div class="flex flex-col">
-                            <label for="cat_price" class="mb-1 font-medium dark:text-gray-200">Harga (Rp) :</label>
-                            <input type="number" name="cat_price" id="cat_price" required class="border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="contoh: 5000000">
-                        </div>
-                        <div class="flex flex-col">
-                            <label for="cat_image" class="mb-1 font-medium dark:text-gray-200">Gambar Kucing :</label>
-                            <input type="file" name="cat_image" id="cat_image" accept="image/*" required class="border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                        </div>
-                        <div class="flex justify-between mt-4">
-                            <button type="button" id="closePopup" class="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 transition-all">Tutup</button>
-                            <button type="submit" name="add_cat" class="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600 transition-all">Tambah</button>
-                        </div>
-                    </form>
+        <?php if ($_SESSION['role'] === 'admin') : ?>
+            <!-- popup untuk nambahin kucing baru -->
+            <section id="popup" class="fixed inset-0 bg-transparent w-full h-full z-20 hidden" aria-labelledby="dialog-title" aria-modal="true">
+                <div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md w-96 max-w-full">
+                        <h2 id="dialog-title" class="text-xl font-semibold mb-4 text-purple-600 dark:text-purple-400">Tambah Kucing Baru</h2>
+                        <form method="POST" enctype="multipart/form-data" class="flex flex-col gap-3">
+                            <div class="flex flex-col">
+                                <label for="cat_name" class="mb-1 font-medium dark:text-gray-200">Nama Kucing :</label>
+                                <input type="text" name="cat_name" id="cat_name" required class="border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="contoh: Milo - Persian">
+                            </div>
+                            <div class="flex flex-col">
+                                <label for="cat_description" class="mb-1 font-medium dark:text-gray-200">Deskripsi :</label>
+                                <input type="text" name="cat_description" id="cat_description" required class="border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="contoh: berbulu lebat">
+                            </div>
+                            <div class="flex flex-col">
+                                <label for="cat_price" class="mb-1 font-medium dark:text-gray-200">Harga (Rp) :</label>
+                                <input type="number" name="cat_price" id="cat_price" required class="border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="contoh: 5000000">
+                            </div>
+                            <div class="flex flex-col">
+                                <label for="cat_image" class="mb-1 font-medium dark:text-gray-200">Gambar Kucing :</label>
+                                <input type="file" name="cat_image" id="cat_image" accept="image/*" required class="border border-gray-300 rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            </div>
+                            <div class="flex justify-between mt-4">
+                                <button type="button" id="closePopup" class="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 transition-all">Tutup</button>
+                                <button type="submit" name="add_cat" class="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600 transition-all">Tambah</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        <?php endif; ?>
         
         <!-- nampilin kucing -->
         <section aria-labelledby="cats-heading">
@@ -319,20 +327,23 @@ $adoptions = $adoptionManager->getAdoptions();
                         <p class="text-gray-600 dark:text-gray-300">Jenis Kelamin : <?= htmlspecialchars($adoption['gender']) ?></p>
                         <p class="text-gray-600 dark:text-gray-300">Kucing : <?= htmlspecialchars($adoption['cat_name']) ?></p>
                         
-                        <div class="flex space-x-2 mt-3">
-                            <form action="../app/update_struk.php" method="GET" class="inline-block">
-                                <input type="hidden" name="id" value="<?= $adoption['id'] ?>">
-                                <button type="submit" class="bg-purple-500 text-white py-2 px-4 rounded-lg hover:bg-purple-600">
-                                    Edit Struk
-                                </button>
-                            </form>
-                            <form method="POST" class="inline-block">
-                                <input type="hidden" name="id" value="<?= $adoption['id'] ?>">
-                                <button type="submit" name="remove_struk" class="bg-red-500 text-white py-2 px-3 rounded-lg hover:bg-red-600 transition duration-300">
-                                    Hapus
-                                </button>
-                            </form>
-                        </div>
+                        <?php if ($_SESSION['role'] === 'admin') : ?>
+                            <div class="flex space-x-2 mt-3">
+                                <form action="../app/update_struk.php" method="GET" class="inline-block">
+                                    <input type="hidden" name="id" value="<?= $adoption['id'] ?>">
+                                    <button type="submit" class="bg-purple-500 text-white py-2 px-4 rounded-lg hover:bg-purple-600">
+                                        Edit Struk
+                                    </button>
+                                </form>
+                                <form method="POST" class="inline-block">
+                                    <input type="hidden" name="id" value="<?= $adoption['id'] ?>">
+                                    <button type="submit" name="remove_struk" class="bg-red-500 text-white py-2 px-3 rounded-lg hover:bg-red-600 transition duration-300">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        <?php endif; ?>
+
                     </div>
                 <?php } ?>
             </div>
