@@ -27,9 +27,6 @@ if ($cat_id > 0) {
         $stmt->close();
     }
 }
-
-// Ambil status dark mode
-$darkMode = isset($_COOKIE['dark_mode']) && $_COOKIE['dark_mode'] === 'true';
 ?>
 
 <!DOCTYPE html>

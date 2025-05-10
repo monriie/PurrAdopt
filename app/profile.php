@@ -39,7 +39,6 @@ $colorClass = $role === 'admin'
 
 // Ambil data user
 $data = $user->getUserData($currentUsername);
-$darkMode = isset($_COOKIE['dark_mode']) && $_COOKIE['dark_mode'] === 'true';
 ?>
 
 <!DOCTYPE html>
