@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 01, 2025 at 05:57 PM
+-- Generation Time: May 17, 2025 at 06:45 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -42,9 +42,7 @@ CREATE TABLE `adoptions` (
 --
 
 INSERT INTO `adoptions` (`id`, `cat_id`, `name`, `email`, `phone`, `gender`, `adoption_date`) VALUES
-(6, 21, 'kintun', '12345@gmail.com', '089765432121', 'Perempuan', '2025-03-24 05:10:10'),
-(23, 23, 'mon', 'marcies@gmail.com', '081398767898', 'Perempuan', '2025-03-24 05:22:00'),
-(24, 19, 'kintun', '1234@gmail.com', '081234567890', 'Perempuan', '2025-03-25 17:57:46');
+(26, 15, 'mon', 'marcies@gmail.com', '0897654321', 'Perempuan', '2025-05-16 08:34:08');
 
 -- --------------------------------------------------------
 
@@ -87,16 +85,19 @@ CREATE TABLE `users` (
   `username` varchar(50) NOT NULL,
   `nama` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `role` enum('admin','pengadopsi') NOT NULL DEFAULT 'pengadopsi'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `nama`, `password`, `created_at`) VALUES
-(1, 'monriie', 'mon', '$2y$10$/fBuDeHD/VC8kYf6oD4FX.t3fWJBKCzi43LNKaOYccu3Btye75o36', '2025-04-30 17:27:26'),
-(2, 'mon', 'mon', '$2y$10$.FBBosfoarSAB/bJ/nqk2OwZraR1LDjJwG1F6qo5URPbeI4lpWrWq', '2025-05-01 09:35:07');
+INSERT INTO `users` (`id`, `username`, `nama`, `password`, `created_at`, `role`) VALUES
+(1, 'monriie', 'mon', '$2y$10$/fBuDeHD/VC8kYf6oD4FX.t3fWJBKCzi43LNKaOYccu3Btye75o36', '2025-04-30 17:27:26', 'pengadopsi'),
+(3, 'admin', 'admin1', '$2y$10$v7NssXMQmGr6wMGVEY3MYu8oPITJ7zY0RhL9CjaG0HBAsxXqQo1Pq', '2025-05-10 15:36:55', 'admin'),
+(4, 'yupi', 'marcie', '$2y$10$4UscHmZdqAOr1MB.uufqkOcpnJahW0HRNiFn90/33zDapdIkIx63e', '2025-05-17 06:27:04', 'pengadopsi'),
+(5, 'ciwi', 'cimii', '$2y$10$2BXqWvIJ7qRHqSdHXUCW.eQNgX6RI0FOXF7ZcdOkqR.amiggWGYAO', '2025-05-17 06:30:35', 'pengadopsi');
 
 --
 -- Indexes for dumped tables
@@ -130,7 +131,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `adoptions`
 --
 ALTER TABLE `adoptions`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `cats`
@@ -142,7 +143,7 @@ ALTER TABLE `cats`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables
