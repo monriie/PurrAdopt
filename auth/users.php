@@ -66,6 +66,7 @@ class User {
                     session_start();
                     $_SESSION['loggedin'] = true;
                     $_SESSION['username'] = $user['username'];
+                    $_SESSION['role'] = $user['role']; // admin
                     return true;
                 } else {
                     error_log("Password verification failed");
