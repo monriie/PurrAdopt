@@ -135,7 +135,7 @@ class adoptionManager {
 
 class Validator {
     public static function cleanInput($data) {
-        return htmlspecialchars(strip_tags(trim($data)), ENT_QUOTES, 'UTF-8');//bersiin input dari user(trim=spasi awal+end, strip_tags=ilangin tag html+php, htmlspecialchars=convert karakter ke html)
+        return htmlspecialchars(strip_tags(trim($data)), ENT_QUOTES, 'UTF-8');
     }
 }
 
@@ -288,7 +288,7 @@ $adoptions = $adoptionManager->getAdoptions();
         <!-- nampilin kucing -->
         <section aria-labelledby="cats-heading">
             <h2 id="cats-heading" class="sr-only">Daftar Kucing Tersedia</h2>
-            <div id="catList"class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div id="catList" class="catList grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <?php foreach ($cats as $cat): ?>
                     <article 
                         class="cat-item bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg" 
@@ -356,6 +356,9 @@ $adoptions = $adoptionManager->getAdoptions();
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="script.js"></script>
+    <script src="jQuery.js"></script>
+    <?php if ($_SESSION['role'] === 'admin') : ?>
+        <script src="script.js"></script>
+    <?php endif; ?>
 </body>
 </html>

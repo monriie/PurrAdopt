@@ -66,7 +66,7 @@ $data = $user->getUserData($currentUsername);
         </a>
 
         <!-- Tombol Logout -->
-        <a href="../auth/logout.php" class="fixed top-4 right-4 z-10 flex items-center space-x-2 text-sm font-medium bg-white dark:text-purple-400 dark:bg-gray-800 px-4 py-2 rounded-full shadow-md text-red-500 hover:bg-red-500 hover:text-white font-medium transition">Logout</a>
+        <a href="../auth/logout.php" class="fixed top-4 right-4 z-10 flex items-center space-x-2 text-sm font-medium bg-white dark:text-white dark:bg-red-600 px-4 py-2 rounded-full shadow-md text-red-500 hover:bg-red-500 hover:text-white font-medium transition">Logout</a>
     </nav>
 
     <main class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-8 max-w-lg w-full">
